@@ -1,0 +1,220 @@
+.Chess {
+    font-size: 50px;
+    color: #6C978A;
+}
+.Board {
+    width: 410px;
+    height: 410px;
+    background-color: #65532F;
+}
+.Row {
+    width: 400px;
+    height: 50px;
+}
+.Box {
+    position: relative;
+    float: left;
+    position: relative;
+    width: 50px;
+    height: 50px;
+}
+button{
+    width: 50px;
+    height: 50px;
+    background-color: transparent;
+    border-color: transparent;
+    padding: 0%;
+}
+.BRook{
+    background-image: url("Pieces/Black Rook.png");
+    background-size: 100%;
+}
+.BPawn{
+    background-image: url("Pieces/Black Pawn.png");
+    background-size: 100%;
+}
+.WPawn{
+    background-image: url("Pieces/White Pawn.png");
+    background-size: 100%;
+}
+.WRook{
+    background-image: url("Pieces/White Rook.png");
+    background-size: 100%;
+}
+.WBishop{
+    background-image: url("Pieces/White Bishop.png");
+    background-size: 100%;
+}
+.BBishop{
+    background-image: url("Pieces/Black Bishop.png");
+    background-size: 100%;
+}
+.WKing{
+    background-image: url("Pieces/White King.png");
+    background-size: 100%;
+}
+.WQueen{
+    background-image: url("Pieces/White Queen.png");
+    background-size: 100%;
+}
+.BKnight{
+    background-image: url("Pieces/Black Knight.png");
+    background-size: 100%;
+}
+.WKnight{
+    background-image: url("Pieces/White Knight.png");
+    background-size: 100%;
+}
+.BKing{
+    background-image: url("Pieces/Black King.png");
+    background-size: 100%;
+}
+.BQueen{
+    background-image: url("Pieces/Black Queen.png");
+    background-size: 100%;
+}
+.ValidS{
+    position: relative;
+    left: 30%;
+    width: 20px;
+    height: 20px;
+    border-radius: 100%;
+    background-color: rgb(10 10 10 / 50%);
+}
+.TakeS{
+    position: absolute;
+    left: 10%;
+    top: 10%;
+    width: 40px;
+    height: 40px;
+    border-radius: 100%;
+    background-color: rgb(255 0 0/70%);
+    z-index: 10;
+}
+.Newgame{
+    position: relative;
+    background-color: grey;
+    top: 10px;
+    width: 60px;
+    height: 25px;
+    font-size: 10px;
+    border-color: gray;
+}
+.ClearBoard{
+    position: relative;
+    background-color: grey;
+    top: 10px;
+    width: 60px;
+    height: 25px;
+    font-size: 10px;
+    border-color: gray;
+}
+.IncTurn{
+    position: relative;
+    background-color: grey;
+    top: 10px;
+    width: 60px;
+    height: 25px;
+    font-size: 10px;
+    border-color: gray;
+}
+.Turn{
+    position: relative;
+    top: 10px;
+    font-size: 20px;
+    color: #6C978A;
+}
+.Move{
+    position: relative;
+    top: 10px;
+    font-size: 20px;
+    color: #6C978A;
+}
+.WPromote{
+    position: relative;
+    width: 150px;
+    height: 180px;
+    z-index:30;
+    position: relative;
+    background-color: #A7BEB1;
+}
+.Promotetext{
+    align-self: center;
+    position: relative;
+    top: 5px;
+    left: 40px; 
+    font-size: 20px;
+    color: #4B3C1C;
+}
+.PBox {
+    position: relative;
+    float: left;
+    position: relative;
+    width: 75px;
+    height: 75px;
+    padding: 0px;
+}
+.PWRook{
+    position: relative;
+    top: -5px;
+    background-image: url("Pieces/White Rook.png");
+    background-size: 100%;
+    width: 75px;
+    height: 75px;
+}
+.PWBishop{
+    position: relative;
+    top: -5px;
+    background-image: url("Pieces/White Bishop.png");
+    background-size: 100%;
+    width: 75px;
+    height: 75px;
+}
+.PWQueen{
+    position: relative;
+    top: -5px;
+    background-image: url("Pieces/White Queen.png");
+    background-size: 100%;
+    width: 75px;
+    height: 75px;
+}
+.PWKnight{
+    position: relative;
+    top: -5px;
+    background-image: url("Pieces/White Knight.png");
+    background-size: 100%;
+    width: 75px;
+    height: 75px;
+}
+.PBRook{
+    position: relative;
+    top: -5px;
+    background-image: url("Pieces/Black Rook.png");
+    background-size: 100%;
+    width: 75px;
+    height: 75px;
+}
+.PBBishop{
+    position: relative;
+    top: -5px;
+    background-image: url("Pieces/Black Bishop.png");
+    background-size: 100%;
+    width: 75px;
+    height: 75px;
+}
+.PBQueen{
+    position: relative;
+    top: -5px;
+    background-image: url("Pieces/Black Queen.png");
+    background-size: 100%;
+    width: 75px;
+    height: 75px;
+}
+.PBKnight{
+    position: relative;
+    top: -5px;
+    background-image: url("Pieces/Black Knight.png");
+    background-size: 100%;
+    width: 75px;
+    height: 75px;
+}
