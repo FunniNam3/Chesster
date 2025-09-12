@@ -48,6 +48,8 @@ function TaskManager({ session }: { session: Session }) {
       console.error("Error updating task: ", error.message);
       return;
     }
+
+    setNewDescription("");
   };
 
   const handleSubmit = async (e: any) => {
@@ -79,6 +81,26 @@ function TaskManager({ session }: { session: Session }) {
         (payload) => {
           const newTask = payload.new as Task;
           setTasks((prev) => [...prev, newTask]);
+        }
+      )
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "tasks" },
+        (payload) => {
+          const updatedTask = payload.new as Task;
+          setTasks((prev) =>
+            prev.map((task) =>
+              task.id === updatedTask.id ? updatedTask : task
+            )
+          );
+        }
+      )
+      .on(
+        "postgres_changes",
+        { event: "DELETE", schema: "public", table: "tasks" },
+        (payload) => {
+          const deletedTask = payload.old as Task;
+          setTasks((prev) => prev.filter((task) => task.id != deletedTask.id));
         }
       )
       .subscribe((status) => {
