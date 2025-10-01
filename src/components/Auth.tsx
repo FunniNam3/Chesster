@@ -6,6 +6,7 @@ import {
 } from "react";
 import { supabase } from "../supabase-client";
 import type { Session } from "@supabase/supabase-js";
+import type { Profile } from "../App";
 
 export const Auth = () => {
   const [isSignUp, setIsSignUp] = useState(false);
@@ -76,10 +77,10 @@ export const Auth = () => {
 
 export const SetUser = ({
   session,
-  setUser,
+  setProfile,
 }: {
   session: Session;
-  setUser: React.Dispatch<SetStateAction<string | null>>;
+  setProfile: React.Dispatch<SetStateAction<Profile | null>>;
 }) => {
   const [username, setUsername] = useState("");
 
@@ -94,7 +95,11 @@ export const SetUser = ({
     if (error) console.error(error);
     else console.log("Username updated!");
 
-    setUser(username);
+    setProfile({
+      id: session.user.id,
+      username: username,
+      display_name: username,
+    });
   };
 
   return (

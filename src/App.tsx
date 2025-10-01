@@ -3,10 +3,18 @@ import "./App.css";
 import TaskManager from "./components/TaskManager.tsx";
 import { Auth, SetUser } from "./components/Auth.tsx";
 import { supabase } from "./supabase-client";
+import type { Session } from "@supabase/supabase-js";
+import Header from "./components/Header.tsx";
+
+export interface Profile {
+  id: string;
+  username: string;
+  display_name: string;
+}
 
 function App() {
-  const [session, setSession] = useState<any>(null);
-  const [username, setUsername] = useState<string | null>("");
+  const [session, setSession] = useState<Session | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
 
   const fetchSession = async () => {
     const currentSession = await supabase.auth.getSession();
@@ -25,7 +33,7 @@ function App() {
         console.error("Error fetching username: ", error.message);
         return;
       }
-      setUsername(data.username);
+      setProfile(data);
     }
   };
 
@@ -44,6 +52,7 @@ function App() {
   }, []);
 
   useEffect(() => {
+    console.log("Fetching Profile");
     fetchProfile();
   }, [session]);
 
@@ -52,20 +61,24 @@ function App() {
   };
 
   return (
-    <>
+    <section style={{ minHeight: "100vh" }}>
+      <Header />
       {session ? (
         <>
           <button onClick={logout}>Log Out</button>
-          {username ? (
-            <TaskManager session={session} />
+          {profile ? (
+            <>
+              <h1>{profile.username}</h1>
+              <TaskManager session={session} />
+            </>
           ) : (
-            <SetUser session={session} setUser={setUsername} />
+            <SetUser session={session} setProfile={setProfile} />
           )}
         </>
       ) : (
         <Auth />
       )}
-    </>
+    </section>
   );
 }
 
