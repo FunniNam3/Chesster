@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
 import "./App.css";
-import TaskManager from "./components/TaskManager.tsx";
+import TaskManager from "./components/Taskmanager/TaskManager.tsx";
 import { Auth, SetUser } from "./components/Auth.tsx";
 import { supabase } from "./supabase-client";
 import type { Session } from "@supabase/supabase-js";
-import Header from "./components/Header.tsx";
+import Header from "./components/Header/Header.tsx";
+import { Routes, Route } from "react-router-dom";
+import { Profile } from "./components/Profile/Profile.tsx";
+import { Homepage } from "./components/Home.tsx";
 
 export interface Profile {
   id: string;
@@ -56,29 +59,34 @@ function App() {
     fetchProfile();
   }, [session]);
 
-  const logout = async () => {
-    await supabase.auth.signOut();
-  };
-
   return (
-    <section style={{ minHeight: "100vh" }}>
-      <Header />
-      {session ? (
-        <>
-          <button onClick={logout}>Log Out</button>
-          {profile ? (
+    <div style={{ minHeight: "100vh", minWidth: "100vw" }}>
+      <Header profile={profile} />
+      <Routes>
+        <Route path="/" element={<Homepage />} />
+        <Route
+          path="/play"
+          element={
             <>
-              <h1>{profile.username}</h1>
-              <TaskManager session={session} />
+              {session ? (
+                <>
+                  {profile ? (
+                    <>
+                      <TaskManager session={session} />
+                    </>
+                  ) : (
+                    <SetUser session={session} setProfile={setProfile} />
+                  )}
+                </>
+              ) : (
+                <Auth />
+              )}
             </>
-          ) : (
-            <SetUser session={session} setProfile={setProfile} />
-          )}
-        </>
-      ) : (
-        <Auth />
-      )}
-    </section>
+          }
+        />
+        <Route path="/:userName" element={<Profile />} />
+      </Routes>
+    </div>
   );
 }
 

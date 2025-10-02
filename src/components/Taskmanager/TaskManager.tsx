@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import "../App.css";
-import { supabase } from "../supabase-client.tsx";
+import "../../App.css";
+import { supabase } from "../../supabase-client.tsx";
 import type { Session } from "@supabase/supabase-js";
 
 interface Task {
