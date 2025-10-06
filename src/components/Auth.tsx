@@ -5,23 +5,30 @@ import {
   type SetStateAction,
 } from "react";
 import { supabase } from "../supabase-client";
-import type { Session } from "@supabase/supabase-js";
+import type { AuthError, Session } from "@supabase/supabase-js";
 import type { Profile } from "../App";
+import { useNavigate } from "react-router-dom";
 
 export const Auth = () => {
+  const navigate = useNavigate();
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [AuthError, setAuthError] = useState<AuthError>();
 
   const handleAuthSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (isSignUp) {
+      // If you signup with an already existing email, it rewrites the password
       const { error: signUpError } = await supabase.auth.signUp({
         email,
         password,
       });
       if (signUpError) {
+        setAuthError(signUpError);
         console.error("Error signing up: ", signUpError.message);
+      } else {
+        navigate("/");
       }
     } else {
       const { error: signInError } = await supabase.auth.signInWithPassword({
@@ -29,7 +36,10 @@ export const Auth = () => {
         password,
       });
       if (signInError) {
+        setAuthError(signInError);
         console.error("Error signing in: ", signInError.message);
+      } else {
+        navigate("/");
       }
     }
   };
@@ -37,6 +47,7 @@ export const Auth = () => {
   return (
     <div style={{ maxWidth: "400px", margin: "0 auto", padding: "1rem" }}>
       <h2>{isSignUp ? "Sign Up" : "Sign In"}</h2>
+      <p>{AuthError ? `Error: ${AuthError.message}` : ""}</p>
       <form onSubmit={handleAuthSubmit} style={{ marginBottom: "1rem" }}>
         <input
           type="email"

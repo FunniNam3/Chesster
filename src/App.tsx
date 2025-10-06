@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import "./App.css";
-import TaskManager from "./components/Taskmanager/TaskManager.tsx";
+// import TaskManager from "./components/Taskmanager/TaskManager.tsx";
 import { Auth, SetUser } from "./components/Auth.tsx";
 import { supabase } from "./supabase-client";
 import type { Session } from "@supabase/supabase-js";
 import Header from "./components/Header/Header.tsx";
 import { Routes, Route } from "react-router-dom";
-import { Profile } from "./components/Profile/Profile.tsx";
+import { ProfilePage } from "./components/Profile/Profile.tsx";
 import { Homepage } from "./components/Home.tsx";
+import { Play } from "./components/Play/Play.tsx";
 
 export interface Profile {
   id: string;
@@ -61,7 +62,11 @@ function App() {
 
   return (
     <div style={{ minHeight: "100vh", minWidth: "100vw" }}>
-      <Header profile={profile} />
+      <Header
+        profile={profile}
+        setProfile={setProfile}
+        setSession={setSession}
+      />
       <Routes>
         <Route path="/" element={<Homepage />} />
         <Route
@@ -72,7 +77,8 @@ function App() {
                 <>
                   {profile ? (
                     <>
-                      <TaskManager session={session} />
+                      <Play />
+                      {/* <TaskManager session={session} /> */}
                     </>
                   ) : (
                     <SetUser session={session} setProfile={setProfile} />
@@ -84,7 +90,12 @@ function App() {
             </>
           }
         />
-        <Route path="/:userName" element={<Profile />} />
+        <Route path="/auth" element={<Auth />} />
+        <Route
+          path="/profiles/:username"
+          element={<ProfilePage currentProfile={profile} />}
+        />
+        <Route path="/*" element={<h1>GO AWAY THERE IS NOTHING HERE</h1>} />
       </Routes>
     </div>
   );

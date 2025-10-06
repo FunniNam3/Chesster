@@ -2,8 +2,18 @@ import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "../../supabase-client";
 import type { Profile } from "../../App";
 import "./Header.css";
+import type { SetStateAction } from "react";
+import type { Session } from "@supabase/supabase-js";
 
-function Header({ profile }: { profile: Profile | null }) {
+function Header({
+  profile,
+  setSession,
+  setProfile,
+}: {
+  profile: Profile | null;
+  setSession: React.Dispatch<SetStateAction<Session | null>>;
+  setProfile: React.Dispatch<SetStateAction<Profile | null>>;
+}) {
   const navigate = useNavigate();
 
   const logout = async () => {
@@ -29,7 +39,7 @@ function Header({ profile }: { profile: Profile | null }) {
           <h1>Home</h1>
         </Link>
         <Link
-          to="/play"
+          to={profile ? "/play" : "/auth"}
           style={{ color: "rgba(255, 255, 255, 0.87)", flexGrow: 1 }}
         >
           <h1>Play</h1>
@@ -38,17 +48,26 @@ function Header({ profile }: { profile: Profile | null }) {
       {profile ? (
         <>
           <Link
-            to={`/${profile.username}`}
+            to={`/profiles/${profile.username}`}
             style={{ color: "rgba(255, 255, 255, 0.87)" }}
           >
             <h1>{profile?.display_name}</h1>
           </Link>
-          <button onClick={logout} className="Headerbutton">
+          <button
+            onClick={() => {
+              logout();
+              setProfile(null);
+              setSession(null);
+            }}
+            className="Headerbutton"
+          >
             <h3>Log Out</h3>
           </button>
         </>
       ) : (
-        <h1>Sign In</h1>
+        <Link to="/auth" style={{ color: "rgba(255, 255, 255, 0.87)" }}>
+          <h1>Sign In</h1>
+        </Link>
       )}
     </nav>
   );
