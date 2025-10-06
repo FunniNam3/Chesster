@@ -14,12 +14,16 @@ export const Auth = () => {
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [vPassword, setVpassword] = useState("");
   const [AuthError, setAuthError] = useState<AuthError>();
 
   const handleAuthSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (isSignUp) {
-      // If you signup with an already existing email, it rewrites the password
+      if (password !== vPassword) {
+        console.error("Error signing up: Passwords do not match");
+        return;
+      }
       const { error: signUpError } = await supabase.auth.signUp({
         email,
         password,
@@ -67,9 +71,22 @@ export const Auth = () => {
           }
           style={{ width: "100%", marginBottom: "0.5rem", padding: "0.5rem" }}
         />
+        {isSignUp && (
+          <input
+            type="password"
+            placeholder="Verify Password"
+            value={vPassword}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              setVpassword(e.target.value)
+            }
+            style={{ width: "100%", marginBottom: "0.5rem", padding: "0.5rem" }}
+          />
+        )}
+
         <button
           type="submit"
           style={{ padding: "0.5rem 1rem", marginRight: "0.5rem" }}
+          disabled={isSignUp && (password !== vPassword || !password)}
         >
           {isSignUp ? "Sign Up" : "Sign In"}
         </button>
