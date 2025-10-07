@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 // import TaskManager from "./components/Taskmanager/TaskManager.tsx";
-import { Auth, SetUser } from "./components/Auth.tsx";
+import { Auth } from "./components/Auth.tsx";
 import { supabase } from "./supabase-client";
 import type { Session } from "@supabase/supabase-js";
 import Header from "./components/Header/Header.tsx";
@@ -9,11 +9,14 @@ import { Routes, Route } from "react-router-dom";
 import { ProfilePage } from "./components/Profile/Profile.tsx";
 import { Homepage } from "./components/Home.tsx";
 import { Play } from "./components/Play/Play.tsx";
+import { Footer } from "./components/Footer/Footer.tsx";
+import { GameLobby } from "./components/Play/GameLobby.tsx";
 
 export interface Profile {
   id: string;
   username: string;
   display_name: string;
+  currentGame: string;
 }
 
 function App() {
@@ -76,27 +79,10 @@ function App() {
       />
       <Routes>
         <Route path="/" element={<Homepage />} />
-        <Route
-          path="/play"
-          element={
-            <>
-              {session ? (
-                <>
-                  {profile ? (
-                    <>
-                      <Play />
-                      {/* <TaskManager session={session} /> */}
-                    </>
-                  ) : (
-                    <SetUser session={session} setProfile={setProfile} />
-                  )}
-                </>
-              ) : (
-                <Auth />
-              )}
-            </>
-          }
-        />
+        <Route path="/play">
+          <Route index element={<GameLobby profile={profile} />} />
+          <Route path=":gameID" element={<Play currentProfile={profile} />} />
+        </Route>
         <Route path="/auth" element={<Auth />} />
         <Route
           path="/profiles/:username"
@@ -104,6 +90,7 @@ function App() {
         />
         <Route path="/*" element={<h1>GO AWAY THERE IS NOTHING HERE</h1>} />
       </Routes>
+      <Footer />
     </div>
   );
 }

@@ -26,7 +26,7 @@ function Header({
       style={{
         top: "0",
         width: "96vw",
-        padding: "2vw",
+        padding: "0 2vw",
         display: "flex",
         flexDirection: "row",
         justifyContent: "center",
