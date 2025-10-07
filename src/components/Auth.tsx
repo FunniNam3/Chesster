@@ -6,7 +6,7 @@ import {
 } from "react";
 import { supabase } from "../supabase-client";
 import type { AuthError, Session } from "@supabase/supabase-js";
-import type { Profile } from "../App";
+import { styles, type Profile } from "../App";
 import { useNavigate } from "react-router-dom";
 
 export const Auth = () => {
@@ -50,55 +50,67 @@ export const Auth = () => {
 
   return (
     <div style={{ maxWidth: "400px", margin: "0 auto", padding: "1rem" }}>
-      <h2>{isSignUp ? "Sign Up" : "Sign In"}</h2>
-      <p>{AuthError ? `Error: ${AuthError.message}` : ""}</p>
-      <form onSubmit={handleAuthSubmit} style={{ marginBottom: "1rem" }}>
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e: ChangeEvent<HTMLInputElement>) =>
-            setEmail(e.target.value)
-          }
-          style={{ width: "100%", marginBottom: "0.5rem", padding: "0.5rem" }}
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e: ChangeEvent<HTMLInputElement>) =>
-            setPassword(e.target.value)
-          }
-          style={{ width: "100%", marginBottom: "0.5rem", padding: "0.5rem" }}
-        />
-        {isSignUp && (
+      <div style={styles.container}>
+        <h2>{isSignUp ? "Sign Up" : "Sign In"}</h2>
+        <p>{AuthError ? `Error: ${AuthError.message}` : ""}</p>
+        <form
+          onSubmit={handleAuthSubmit}
+          style={{
+            display: "flex",
+            marginBottom: "1rem",
+            flexDirection: "column",
+          }}
+        >
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              setEmail(e.target.value)
+            }
+            style={{ marginBottom: "0.5rem", padding: "0.5rem" }}
+          />
           <input
             type="password"
-            placeholder="Verify Password"
-            value={vPassword}
+            placeholder="Password"
+            value={password}
             onChange={(e: ChangeEvent<HTMLInputElement>) =>
-              setVpassword(e.target.value)
+              setPassword(e.target.value)
             }
-            style={{ width: "100%", marginBottom: "0.5rem", padding: "0.5rem" }}
+            style={{ marginBottom: "0.5rem", padding: "0.5rem" }}
           />
-        )}
+          {isSignUp && (
+            <input
+              type="password"
+              placeholder="Verify Password"
+              value={vPassword}
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                setVpassword(e.target.value)
+              }
+              style={{
+                marginBottom: "0.5rem",
+                padding: "0.5rem",
+              }}
+            />
+          )}
 
+          <button
+            type="submit"
+            style={{ padding: "0.5rem 1rem", marginRight: "0.5rem" }}
+            disabled={isSignUp && (password !== vPassword || !password)}
+          >
+            {isSignUp ? "Sign Up" : "Sign In"}
+          </button>
+        </form>
         <button
-          type="submit"
-          style={{ padding: "0.5rem 1rem", marginRight: "0.5rem" }}
-          disabled={isSignUp && (password !== vPassword || !password)}
+          onClick={() => {
+            setIsSignUp(!isSignUp);
+          }}
+          style={{ padding: "0.5rem 1rem" }}
         >
-          {isSignUp ? "Sign Up" : "Sign In"}
+          {isSignUp ? "Switch to Sign In" : "Switch to Sign Up"}
         </button>
-      </form>
-      <button
-        onClick={() => {
-          setIsSignUp(!isSignUp);
-        }}
-        style={{ padding: "0.5rem 1rem" }}
-      >
-        {isSignUp ? "Switch to Sign In" : "Switch to Sign Up"}
-      </button>
+      </div>
     </div>
   );
 };

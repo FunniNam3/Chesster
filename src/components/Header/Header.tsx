@@ -25,7 +25,8 @@ function Header({
     <nav
       style={{
         top: "0",
-        margin: "auto 4vw",
+        width: "96vw",
+        padding: "2vw",
         display: "flex",
         flexDirection: "row",
         justifyContent: "center",

@@ -61,7 +61,14 @@ function App() {
   }, [session]);
 
   return (
-    <div style={{ minHeight: "100vh", minWidth: "100vw" }}>
+    <div
+      style={{
+        minHeight: "100vh",
+        minWidth: "100vw",
+        justifyContent: "center",
+        justifyItems: "center",
+      }}
+    >
       <Header
         profile={profile}
         setProfile={setProfile}
@@ -102,3 +109,16 @@ function App() {
 }
 
 export default App;
+
+export const styles: { container: React.CSSProperties } = {
+  container: {
+    borderRadius: "8px",
+    border: "1vmin solid #1a1a1aff",
+    padding: "0.6em 1.2em",
+    backgroundColor: "#202020ff",
+    justifyContent: "center",
+    justifyItems: "center",
+    width: "fit-content",
+    height: "fit-content",
+  },
+};
