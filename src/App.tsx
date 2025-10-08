@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 // import TaskManager from "./components/Taskmanager/TaskManager.tsx";
-import { Auth } from "./components/Auth.tsx";
+import { Auth, SetUser } from "./components/Auth.tsx";
 import { supabase } from "./supabase-client";
 import type { Session } from "@supabase/supabase-js";
 import Header from "./components/Header/Header.tsx";
@@ -59,7 +59,6 @@ function App() {
   }, []);
 
   useEffect(() => {
-    console.log("Fetching Profile");
     fetchProfile();
   }, [session]);
 
@@ -79,6 +78,12 @@ function App() {
       />
       <Routes>
         <Route path="/" element={<Homepage />} />
+        <Route
+          path="/setUser"
+          element={
+            <SetUser session={session as Session} setProfile={setProfile} />
+          }
+        />
         <Route path="/play">
           <Route index element={<GameLobby profile={profile} />} />
           <Route path=":gameID" element={<Play currentProfile={profile} />} />

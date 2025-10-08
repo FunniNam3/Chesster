@@ -1,13 +1,16 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { Profile } from "../../App";
 import { supabase } from "../../supabase-client";
 import { Navigate, useNavigate } from "react-router-dom";
 
 export function GameLobby({ profile }: { profile: Profile | null }) {
   const nav = useNavigate();
-  if (profile?.currentGame) {
-    nav("/play/" + profile?.currentGame);
-  }
+  useEffect(() => {
+    if (profile?.currentGame) {
+      nav("/play/" + profile?.currentGame);
+    }
+  }, []);
+
   const [isWhite, setIsWhite] = useState(true);
   const createGame = async () => {
     if (!profile) {

@@ -7,25 +7,51 @@ export function Play({ currentProfile }: { currentProfile: Profile | null }) {
   const nav = useNavigate();
   const { gameID } = useParams();
   const boardTheme = ["#adadadff", "#222222ff"];
+  const [playerColor, setPlayerColor] = useState(-1);
   const [currentBoard, setCurrentBoard] = useState(
     "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"
   );
+  const [boardFlipped, setBoardFlipped] = useState(false);
+
   const dragInfo = useRef<{
     piece: string;
     fromRow: number;
     fromCol: number;
   } | null>(null);
 
-  function handleDragStart(
-    e: React.DragEvent<HTMLImageElement>,
-    piece: string,
-    row: number,
-    col: number
-  ) {
-    dragInfo.current = { piece, fromRow: row, fromCol: col };
+  async function getColor() {
+    const { data } = await supabase
+      .from("games")
+      .select("white_player, black_player")
+      .eq("id", gameID)
+      .eq("ended", false)
+      .single();
+    if (data?.white_player && data?.white_player == currentProfile?.id) {
+      setPlayerColor(0);
+    } else if (data?.black_player && data?.black_player == currentProfile?.id) {
+      setPlayerColor(1);
+    } else {
+      setPlayerColor(-1);
+    }
   }
 
-  function handleDrop(
+  function handleDragStart(piece: string, row: number, col: number) {
+    if (playerColor === -1) return;
+    // Uppercase = White
+    if (isUppercase(piece)) {
+      if (playerColor !== 0) return; // white player only
+    } else {
+      if (playerColor !== 1) return; // black player only
+    }
+
+    dragInfo.current = {
+      piece,
+      fromRow: boardFlipped ? 7 - row : row,
+      fromCol: boardFlipped ? 7 - col : col,
+    };
+  }
+
+  async function handleDrop(
     e: React.DragEvent<HTMLDivElement>,
     toRow: number,
     toCol: number
@@ -40,13 +66,23 @@ export function Play({ currentProfile }: { currentProfile: Profile | null }) {
     const boardArr = fenToArray(currentBoard);
 
     // Move piece
-    console.log(piece);
+    if (toRow == fromRow && toCol == fromCol) {
+      console.error("Invalid move");
+      return;
+    }
     boardArr[toRow][toCol] = piece;
     boardArr[fromRow][fromCol] = null;
 
     // Convert back to FEN
     const newFEN = arrayToFen(boardArr);
     setCurrentBoard(newFEN);
+
+    const { error } = await supabase
+      .from("games")
+      .update({ currentBoard: newFEN })
+      .eq("id", gameID);
+
+    if (error) console.error("Error updating board: ", error);
   }
 
   const getBoard = async () => {
@@ -64,14 +100,50 @@ export function Play({ currentProfile }: { currentProfile: Profile | null }) {
 
   useEffect(() => {
     getBoard();
-  }, []);
+    getColor();
+  }, [currentProfile, gameID]);
+
+  useEffect(() => {
+    if (!gameID) return;
+
+    const channel = supabase
+      .channel(`game-${gameID}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "games",
+          filter: `id=eq.${gameID}`,
+        },
+        (payload) => {
+          const updated = payload.new;
+          if (updated.currentBoard) {
+            setCurrentBoard(updated.currentBoard);
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [gameID]);
 
   return (
     <div style={{ justifyItems: "center" }}>
       <div style={styles.container}>
-        <h1>Chess Board</h1>
+        <div style={{ display: "flex", flexDirection: "row" }}>
+          <h1>Chess Board</h1>
+          <button onClick={() => setBoardFlipped(!boardFlipped)}>
+            <h3>Flip Board</h3>
+          </button>
+        </div>
         <Resizable>
-          {currentBoard.split("/").map((row, i) => (
+          {(boardFlipped
+            ? currentBoard.split("/").reverse()
+            : currentBoard.split("/")
+          ).map((row, i) => (
             <div
               key={i}
               style={{
@@ -91,7 +163,7 @@ export function Play({ currentProfile }: { currentProfile: Profile | null }) {
   function expandFENRow(row: string, rowIndex: number) {
     const elements: React.ReactElement[] = [];
     let col = 0;
-
+    if (boardFlipped) row = row.split("").reverse().join("");
     for (const char of row) {
       const isNumber = !isNaN(parseInt(char));
       if (isNumber) {
@@ -112,7 +184,13 @@ export function Play({ currentProfile }: { currentProfile: Profile | null }) {
       <div
         key={row * 8 + col}
         onDragOver={(e) => e.preventDefault()} // must call this to allow dropping
-        onDrop={(e) => handleDrop(e, row, col)}
+        onDrop={(e) =>
+          handleDrop(
+            e,
+            boardFlipped ? 7 - row : row,
+            boardFlipped ? 7 - col : col
+          )
+        }
         style={{
           width: "12.5%",
           height: "100%",
@@ -125,8 +203,15 @@ export function Play({ currentProfile }: { currentProfile: Profile | null }) {
       >
         {piece && (
           <img
-            draggable
-            onDragStart={(e) => handleDragStart(e, piece, row, col)}
+            draggable={
+              playerColor !== -1 &&
+              ((isUppercase(piece) && playerColor === 0) || // white
+                (!isUppercase(piece) && playerColor === 1)) // black
+            }
+            onDragStart={(e) => {
+              e.dataTransfer.setData("text/plain", "dragging");
+              handleDragStart(piece, row, col);
+            }}
             src={`/pieces/Chess_${
               piece.toLowerCase() + (piece.toLowerCase() == piece ? "d" : "l")
             }t45.svg`}
@@ -247,4 +332,8 @@ function arrayToFen(board: (string | null)[][]): string {
       return fenRow;
     })
     .join("/");
+}
+
+function isUppercase(input: string): boolean {
+  return input == input.toUpperCase();
 }

@@ -139,7 +139,10 @@ export const SetUser = ({
       id: session.user.id,
       username: username,
       display_name: username,
+      currentGame: "",
     });
+
+    useNavigate()("/");
   };
 
   return (
